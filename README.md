@@ -2,7 +2,8 @@
 
 Generic GoLang internals instrumentation
 
-[![Build Status](https://travis-ci.org/samarudge/go-stats.svg?branch=master)](https://travis-ci.org/samarudge/go-stats)
+(this fork support InfluxDB tags)
+
 [![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 
 ![](http://f.cl.ly/items/3q3K381r2D0K3O3S2H0Q/Screen%20Shot%202016-04-03%20at%2018.56.08.png?v=9fe2d412)
@@ -15,7 +16,7 @@ package main
 import "github.com/samarudge/go-stats"
 
 func main(){
-	gostats.Start("statsd-host:8125", 10, "application-name")
+	gostats.Start("statsd-host:8125", 10, "application-name", "tag1", "tag2")
 }
 ```
 
