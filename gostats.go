@@ -20,6 +20,8 @@ type GoStats struct {
 	PushTicker   *time.Ticker
 	Conn         *statsd.Client
 	Collectors   collectorList
+
+	tags []string
 }
 
 func sanitizeMetricName(name string) string {
@@ -33,14 +35,14 @@ func sanitizeMetricName(name string) string {
 	return name
 }
 
-func New() *GoStats {
+func New(tags ...string) *GoStats {
 	s := GoStats{}
 	s.ClientName = "gostats"
 	host, _ := os.Hostname()
 	s.Hostname = sanitizeMetricName(host)
 
 	s.Collectors = collectorList{memStats, goRoutines, cgoCalls, gcs}
-
+	s.tags = tags
 	return &s
 }
 
@@ -62,8 +64,7 @@ func (s *GoStats) MetricBase() string {
 
 func (s *GoStats) Start() error {
 	var err error
-	//s.Conn = statsd.NewStatsdClient(s.StatsdHost, s.MetricBase())
-	s.Conn, err = statsd.New(statsd.Address(s.StatsdHost))
+	s.Conn, err = statsd.New(statsd.TagsFormat(statsd.InfluxDB), statsd.Tags(s.tags...), statsd.Address(s.StatsdHost))
 	if err != nil {
 		return err
 	}
