@@ -46,8 +46,8 @@ func New(tags ...string) *GoStats {
 	return &s
 }
 
-func Start(statsdHost string, pushInterval int, clientName string) (*GoStats, error) {
-	s := New()
+func Start(statsdHost string, pushInterval int, clientName string, tags ...string) (*GoStats, error) {
+	s := New(tags...)
 
 	s.StatsdHost = statsdHost
 	s.PushInterval = time.Duration(pushInterval) * time.Second
