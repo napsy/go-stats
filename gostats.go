@@ -1,12 +1,13 @@
 package gostats
 
 import (
-	"github.com/quipo/statsd"
 	"os"
 	"regexp"
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/alexcesaro/statsd"
 )
 
 type collectorList []func() map[string]float64
@@ -17,7 +18,7 @@ type GoStats struct {
 	PushInterval time.Duration
 	StatsdHost   string
 	PushTicker   *time.Ticker
-	Conn         *statsd.StatsdClient
+	Conn         *statsd.Client
 	Collectors   collectorList
 }
 
@@ -60,14 +61,13 @@ func (s *GoStats) MetricBase() string {
 }
 
 func (s *GoStats) Start() error {
-	s.Conn = statsd.NewStatsdClient(s.StatsdHost, s.MetricBase())
-	err := s.Conn.CreateSocket()
+	var err error
+	//s.Conn = statsd.NewStatsdClient(s.StatsdHost, s.MetricBase())
+	s.Conn, err = statsd.New(statsd.Address(s.StatsdHost))
 	if err != nil {
 		return err
 	}
-
 	s.PushTicker = time.NewTicker(s.PushInterval)
-
 	go s.startSender()
 
 	return nil
@@ -78,21 +78,20 @@ func (s *GoStats) Stop() {
 }
 
 func (s *GoStats) startSender() {
-	buffer := statsd.NewStatsdBuffer(s.PushInterval, s.Conn)
 	for {
 		select {
 		case <-s.PushTicker.C:
-			s.doSend(buffer)
+			s.doSend()
 		}
 	}
 }
 
-func (s *GoStats) doSend(b *statsd.StatsdBuffer) {
+func (s *GoStats) doSend() {
 	for _, collector := range s.Collectors {
 		metrics := collector()
 
 		for metricName, metricValue := range metrics {
-			b.FGauge(metricName, metricValue)
+			s.Conn.Gauge(metricName, metricValue)
 		}
 	}
 }
