@@ -64,7 +64,7 @@ func (s *GoStats) MetricBase() string {
 
 func (s *GoStats) Start() error {
 	var err error
-	s.Conn, err = statsd.New(statsd.TagsFormat(statsd.InfluxDB), statsd.Tags(s.tags...), statsd.Address(s.StatsdHost))
+	s.Conn, err = statsd.New(statsd.Prefix(s.MetricBase()), statsd.TagsFormat(statsd.InfluxDB), statsd.Tags(s.tags...), statsd.Address(s.StatsdHost))
 	if err != nil {
 		return err
 	}
