@@ -13,10 +13,10 @@ Usage;
 ```go
 package main
 
-import "github.com/samarudge/go-stats"
+import "github.com/napsy/go-stats"
 
 func main(){
-	gostats.Start("statsd-host:8125", 10, "application-name", "tag1", "tag2")
+	gostats.Start("statsd-host:8125", 10, "application-name", "tag1", "value1", "tag2", "value2")
 }
 ```
 
