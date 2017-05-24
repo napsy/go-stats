@@ -59,7 +59,7 @@ func Start(statsdHost string, pushInterval int, clientName string, tags ...strin
 }
 
 func (s *GoStats) MetricBase() string {
-	return strings.Join([]string{"gostats", s.ClientName, s.Hostname, ""}, ".")
+	return strings.Join([]string{"gostats", s.ClientName, ""}, ".")
 }
 
 func (s *GoStats) Start() error {
